@@ -8,8 +8,8 @@ on the video.
 It then opens a screen.
 
 The timecode and hotkey labels are shown on the window,
-with the timecode on the bottom left
-and the hotkeys on the bottom right.
+with the timecode on the bottom of screen
+and the hotkeys on the top of screen.
 
 Unfortunately, it does not have a visual scroller.
 You will have to rely on the following key shortcuts: 
