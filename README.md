@@ -1,4 +1,4 @@
-## mini_timeline_scroll
+## mini_timeline_scroll_gtk
 
 #### Description:
 This program takes a video file
