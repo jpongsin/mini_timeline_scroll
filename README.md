@@ -14,22 +14,18 @@ and the hotkeys on the bottom right.
 Unfortunately, it does not have a visual scroller.
 You will have to rely on the following key shortcuts: 
 
-j/shift+left arrow (<-). step backward 10 frame \
-k and spacebar. play and pause \
-l/shift+right arrow (->). step forward 10 frame\
-
-left arrow (<-). step -1 frame \
-right arrow (->). step +1 frame \
-
-left bracket. decrease speed (-0.25)\
-right bracket. increase speed (+0.25)\
-
-down arrow (^). decrease -0.10 level \
-up arrow (v). increase +0.10 level \
-
-home key (HOME). rewind to beginning\
-f. fullscreen \
-m. mute/unmute
+* j/shift+left arrow (<-). step backward 10 frame 
+* k and spacebar. play and pause 
+* l/shift+right arrow (->). step forward 10 frame 
+* left arrow (<-). step -1 frame 
+* right arrow (->). step +1 frame 
+* left bracket. decrease speed (-0.25) 
+* right bracket. increase speed (+0.25) 
+* down arrow (^). decrease volume -0.10 level 
+* up arrow (v). increase volume +0.10 level 
+* home key (HOME). rewind to beginning
+* f. fullscreen 
+* m. mute/unmute
 
 Fortunately, you can exit the video window, meaning
 the application will exit and terminate.
