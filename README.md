@@ -41,14 +41,15 @@ the application will exit and terminate.
 3. To clean up, run make clean.
 
 
-Expected Output:
+#### Expected Output:
 A window opening, with instructions and time code sandwiched between a video stream.
 
-Notes:
-Prototype.
-This video runs on software acceleration. Maximum streamable file reportedly is 8K 30fps.
-May not cooperate with high bitrates at all
-Limited compatibility with HDR and some select proprietary formats
-May need to look for options for hardware and GUI
+#### Notes:
+* Prototype.
+* This video runs on software acceleration.
+* Maximum streamable file reportedly is 8K 30fps.
+* May not cooperate with high bitrates at all.
+* Limited compatibility with HDR and some select proprietary formats
+* May need to look for options for hardware and GUI
 
 Copyright (C) 2026 jpongsin
