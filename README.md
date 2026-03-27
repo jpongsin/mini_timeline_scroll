@@ -47,6 +47,8 @@ A window opening, with instructions and time code sandwiched between a video str
 Notes:
 Prototype.
 This video runs on software acceleration. Maximum streamable file reportedly is 8K 30fps.
+May not cooperate with high bitrates at all
+Limited compatibility with HDR and some select proprietary formats
 May need to look for options for hardware and GUI
 
 Copyright (C) 2026 jpongsin
