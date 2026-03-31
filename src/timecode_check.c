@@ -18,6 +18,7 @@ char* update_live_timecode(const VideoPlayer *player) {
     // get total frame
     double fps = player->assignedFPS;
     gint64 frame_duration = (gint64)(GST_SECOND / fps);
+     //using pos_ns+100 to ensure consistent frame locking rather than skipping frames: e.g. n = 0,1,2...
     gint64 total_frames = ((pos_ns+100) + (frame_duration / 2)) / frame_duration;
 
     int hours, minutes, seconds, frames;
