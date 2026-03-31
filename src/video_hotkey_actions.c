@@ -88,7 +88,7 @@ void seek_frames(VideoPlayer *player, gint64 direct_count) {
     if (!gst_element_query_position(player->pipeline, GST_FORMAT_TIME, &current_pos)) return;
 
     double fps = player->assignedFPS;
-    // CRITICAL: Calculate duration as a double to avoid losing decimals
+    // calculate duration as a double to avoid losing decimals
     double frame_dur_d = (double)GST_SECOND / fps;
 
     // calculate current frame and target frame for accuracy
@@ -134,7 +134,7 @@ void seek_frames(VideoPlayer *player, gint64 direct_count) {
 }
 
 
-// video_implement.c
+// check if pipeline is active. check if state is playing, then pause, else: play.
 void toggle_playback(const VideoPlayer *player) {
     if (!pipeline_is_active(player)) return;
     GstState current, pending;
