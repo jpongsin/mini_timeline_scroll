@@ -51,6 +51,7 @@ If running from command line
 
 #### Expected Output:
 A window opening, with instructions and time code sandwiched between a video stream.
+![Alt text](https://github.com/jpongsin/mini_timeline_scroll/blob/main/samples/mini_timeline_scroll_1.png?raw=true)
 
 #### Notes:
 * Prototype.
