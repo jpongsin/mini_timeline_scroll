@@ -1,4 +1,4 @@
-## mini_timeline_scroll_gtk
+## mini_timeline_scroll
 
 #### Description:
 This program takes a video file
@@ -34,10 +34,17 @@ the application will exit and terminate.
 * ffmpeg
 * gtk4
 * gstreamer
+* Qt6
+* Homebrew (for use in MacOS)
 
 #### Instructions:
+If running from the executive
+1. Open timeline_scroll_Qt
+2. Open the video
+
+If running from command line
 1. Type make on the terminal
-2. Type "./mini_timeline_scroll video_name.mov"
+2. Type "./timeline_scroll_Qt video_name.mov"
 3. To clean up, run make clean.
 
 
@@ -46,10 +53,8 @@ A window opening, with instructions and time code sandwiched between a video str
 
 #### Notes:
 * Prototype.
-* This video runs on software acceleration.
 * Maximum streamable file reportedly is 8K 30fps.
 * May not cooperate with high bitrates at all.
 * Limited compatibility with HDR and some select proprietary formats
-* May need to look for options for hardware and GUI
 
 Copyright (C) 2026 jpongsin
