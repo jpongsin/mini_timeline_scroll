@@ -386,31 +386,6 @@ void VideoWindow::open_file_dialog() {
     }
 }
 
-//restart pipeline
-void VideoWindow::restart_pipeline(const QString &newPath) {
-    if (player.pipeline) {
-        //stop current pipeline
-        gst_element_set_state(player.pipeline, GST_STATE_NULL);
-
-        //update the uri
-        // in load_new_video, assignFPS is changed, but not in switching audio track
-        player.uri = strdup(newPath.toUtf8().constData());
-
-        // on the src element
-        //reinitialize the bin
-        GstElement *src = gst_bin_get_by_name(GST_BIN(player.pipeline), "src");
-        if (src) {
-            //set and then unref
-            g_object_set(src, "location", player.uri, NULL);
-            gst_object_unref(src);
-        }
-
-        // then start playback
-        gst_element_set_state(player.pipeline, GST_STATE_READY);
-        start_playback(&player);
-    }
-}
-
 //show that hotkeys are permitted while cursor is above screen
 bool VideoWindow::eventFilter(QObject *obj, QEvent *event) {
     if (event->type() == QEvent::KeyPress) {
