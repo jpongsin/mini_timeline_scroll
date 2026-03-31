@@ -274,7 +274,7 @@ void VideoWindow::load_new_video(const QString &fileName) {
     set_video_window(&player, player.window_id);
     gst_element_set_state(player.pipeline, GST_STATE_READY);
 
-    //settle new handler
+     //with handler, allow window to settle before starting playback
     QTimer::singleShot(150, [this]() {
         start_playback(&player);
         this->setFocus();
