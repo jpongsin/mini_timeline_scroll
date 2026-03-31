@@ -50,8 +50,7 @@ If running from command line
 
 
 #### Expected Output:
-A window opening, with instructions and time code sandwiched between a video stream.
-![Alt text](https://github.com/jpongsin/mini_timeline_scroll/blob/main/samples/mini_timeline_scroll_1.png?raw=true)
+![A window opening, with a menu bar, file information and time code sandwiched between a video stream.](https://github.com/jpongsin/mini_timeline_scroll/blob/main/samples/mini_timeline_scroll_1.png)
 
 #### Notes:
 * Prototype.
