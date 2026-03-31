@@ -57,7 +57,6 @@ public:
 
     //for changing audio streams or loading another video
     void probeAudio(AVFormatContext *streamCtx);
-    void restart_pipeline(const QString &newPath);
     void load_new_video(const QString &fileName);
 
     //let hotkeys be allowed in app
