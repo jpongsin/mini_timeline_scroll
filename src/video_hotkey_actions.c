@@ -118,7 +118,7 @@ void print_seek_label(VideoPlayer *player, gint64 target_ns, gint64 jump) {
 
 void seek_mechanism(VideoPlayer *player, gint64 delta) {
     //if pipeline idling, protect from errors
-    if (!player->pipeline || !player->video_sink) return;
+    if (!pipeline_is_active(player)) return;
 
     // assign current position
     gint64 current_pos;
