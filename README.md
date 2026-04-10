@@ -40,14 +40,14 @@ the application will exit and terminate.
 * CMake >= 4.2
 
 #### Instructions: 
-1. Run ./dependency.sh to install dependencies. \
-2. Run ./make_timeline_scroll.sh. \
-3. Go to /build
-4. Click mini_timeline_scroll. Make sure to tick "Executable as Program" in Properties.\
+1. Run ./dependency.sh to install dependencies. 
+2. Run ./make_timeline_scroll.sh. 
+3. Go to /build. You will find an executable app "mini_timeline_scroll"
+4. Click "mini_timeline_scroll". Make sure to tick "Executable as Program" in Properties.
 5. You may also type "./timeline_scroll_Qt video_name.mov" to open video instantly.
 
 #### Notes:
-* Prototype. It is recommmended to do a fresh build as versions of ffmpeg and its libraries are not backwards compatible. There will be plans for relieving this inconvenience.
+* Prototype. It is recommmended to do a fresh build as versions of ffmpeg and its libraries are not backwards compatible. 
 * If you are using a laptop with mixed graphics (e.g. Intel + NVIDIA), if you want to get the most performance, run "Performance Mode", or prime-run, or add an offload prefix.
 * Maximum streamable file reportedly is 8K 30fps.
 * May not cooperate with high bitrates at all.
