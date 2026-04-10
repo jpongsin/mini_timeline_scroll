@@ -40,6 +40,8 @@ case "$OS" in
         sudo zypper install -y gstreamer-devel gstreamer-plugins-base-devel
         # Qt6
         sudo zypper install -y qt6-base-devel qt6-widgets-devel
+        sudo zypper install -y opi
+        sudo opi codecs
         ;;
     arch)
         echo "Installing for Arch Linux..."
