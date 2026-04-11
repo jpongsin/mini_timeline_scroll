@@ -34,7 +34,7 @@ the application will exit and terminate.
 
 #### Requirements:
 * ffmpeg >= 6
-* gstreamer >= 1.0
+* gstreamer >= 1.24
 * Qt >= 6.10 
 * Homebrew (MacOS only)
 * CMake >= 4.2
