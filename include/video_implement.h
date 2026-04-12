@@ -8,12 +8,11 @@
 #define TIMELINE_SCRUB_QT_VIDEO_IMPLEMENT_H
 
 #include <gst/gst.h>
-#include <libavformat/avformat.h>
-#include <gst/video/videooverlay.h>
-#include <math.h>
+
 
 #ifdef __cplusplus
 extern "C" {
+
 #endif
 typedef struct {
     //qt window assignment
@@ -42,7 +41,7 @@ typedef struct {
     //obtain uri for file opening
     gdouble assignedFPS;
     gint64 duration;
-    const gchar* accel_type;
+    const gchar *accel_type;
     const char *uri;
 
     //for use in init_video_processor
@@ -67,9 +66,9 @@ void init_video_processor(VideoPlayer *player, const char *path);
 
 void on_pad_added(GstElement *src, GstPad *new_pad, gpointer data);
 
-void init_idle_pipeline(VideoPlayer *player) ;
+void init_idle_pipeline(VideoPlayer *player);
 #ifdef __cplusplus
 }
 #endif
 
-#endif // TIMELINE_SCRUB_QT_VIDEO_WINDOW_H
+#endif // TIMELINE_SCRUB_QT_VIDEO_IMPLEMENT_H

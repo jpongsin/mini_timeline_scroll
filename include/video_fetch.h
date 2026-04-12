@@ -22,7 +22,6 @@ extern const double fps59;
 ////////////////////////////////////////
 ///prototypes
 double fetchVideoInfo(const AVFormatContext *fic, int videoStreamIndex);
-
 double validateVideo(const char *videoFile, AVFormatContext *fic, int videoStreamIndex);
 
 ///////////////////////////////////////
