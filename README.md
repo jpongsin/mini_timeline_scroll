@@ -26,6 +26,7 @@ You will have to rely on the following key shortcuts:
 * down arrow (^). decrease volume -0.10 level 
 * up arrow (v). increase volume +0.10 level 
 * home key (HOME). rewind to beginning
+* s, screenshot a frame
 * f. fullscreen 
 * m. mute/unmute
 
