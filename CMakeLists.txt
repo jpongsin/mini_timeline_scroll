@@ -55,6 +55,7 @@ add_executable(mini_timeline_scroll ${EXE_TYPE}
         include/video_hotkey_actions.h
         include/video_export_actions.h
         src/video_export_actions.c
+        src/video_windowloads.cpp
 )
 if(NVIDIA_FOUND)
     target_compile_definitions(mini_timeline_scroll PRIVATE __NVIDIA__)
