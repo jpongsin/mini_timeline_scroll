@@ -13,26 +13,6 @@ The timecode and hotkey labels are shown on the window,
 with the timecode on the bottom of screen
 and the hotkeys on the top of screen.
 
-Unfortunately, it does not have a visual scroller.
-You will have to rely on the following key shortcuts: 
-
-* j/shift+left arrow (<-). step backward 10 frame 
-* k and spacebar. play and pause 
-* l/shift+right arrow (->). step forward 10 frame 
-* left arrow (<-). step -1 frame 
-* right arrow (->). step +1 frame 
-* left bracket. decrease speed (-0.25) 
-* right bracket. increase speed (+0.25) 
-* down arrow (^). decrease volume -0.10 level 
-* up arrow (v). increase volume +0.10 level 
-* home key (HOME). rewind to beginning
-* s, screenshot a frame
-* f. fullscreen 
-* m. mute/unmute
-
-Fortunately, you can exit the video window, meaning
-the application will exit and terminate.
-
 #### Requirements:
 * ffmpeg >= 6
 * gstreamer >= 1.24
@@ -47,12 +27,49 @@ the application will exit and terminate.
 4. Click "mini_timeline_scroll". Make sure to tick "Executable as Program" in Properties.
 5. You may also type "./timeline_scroll_Qt video_name.mov" to open video instantly.
 
+#### How to Operate:
+This program is designed primarily for keyboards.
+You will have to rely on the following key shortcuts: 
+
+to use playback:
+* j/shift+left arrow (<-). step backward 10 frame 
+* k and spacebar. play and pause 
+* l/shift+right arrow (->). step forward 10 frame 
+* left arrow (<-). step -1 frame 
+* right arrow (->). step +1 frame
+* home key (HOME). rewind to beginning
+
+to change playback speed:
+* left bracket. decrease speed (-0.25) 
+* right bracket. increase speed (+0.25)
+
+to change volume:
+* down arrow (^). decrease volume -0.10 level 
+* up arrow (v). increase volume +0.10 level
+* m. mute/unmute
+
+to zoom a video:
+* o, zoom out
+* p, zoom in
+* w, scroll to top while zooming
+* s, scroll to down ...
+* a, scroll to left ...
+* d, scroll to right ...
+
+other features:
+* b, screenshot a frame
+* f. fullscreen
+* f11, autohide toolbar
+
+Fortunately, you can exit the video window, meaning the application will exit and terminate.\
+You can also use the mouse to navigate the file menu. There will be clickable features at some point.
+
 #### Notes:
 * Prototype. It is recommmended to do a fresh build as versions of ffmpeg and its libraries are not backwards compatible.
 * No native Wayland support. Limited to Xwayland.
-* If you are using a laptop with mixed graphics (e.g. Intel + NVIDIA), if you want to get the most performance, run "Performance Mode", or prime-run, or add an offload prefix.
+* For laptop with mixed graphics (e.g. Intel + NVIDIA): If you want to get the most performance, run "Performance Mode", or prime-run, or add an offload prefix.
 * Maximum streamable file reportedly is 8K 30fps.
 * May not cooperate with high bitrates at all.
-* Limited compatibility with HDR and some select proprietary formats
+* In practice, this program plays mostly in free formats and SDR. There will be proper ways to detect proprietary formats, prioritize it, and implement it.
 
 Copyright (C) 2026 jpongsin
