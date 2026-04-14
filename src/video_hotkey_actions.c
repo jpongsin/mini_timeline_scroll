@@ -108,8 +108,14 @@ void print_seek_label(VideoPlayer *player, gint64 target_ns, gint64 jump) {
         int chunk = (fps > 40) ? 35964 : 17982;
         gint64 D = frame_idx / chunk;
         gint64 M = frame_idx % chunk;
+        gint64 adjusted;
         // adjust frame rates for display
-        gint64 adjusted = frame_idx + (18 * (drop_val/2) * D) + drop_val * ((M - drop_val) / 1798);
+        if (fps>40) {
+            adjusted = frame_idx + (18 * (drop_val/2) * D) + drop_val * ((M - drop_val) / 3596);
+        }
+        else {
+            adjusted = frame_idx + (18 * (drop_val/2) * D) + drop_val * ((M - drop_val) / 1798);
+        }
         f_label = (int)(adjusted % (int)(fps + 0.5));
     } else {
         f_label = (int)(frame_idx % (int)(fps + 0.5));
