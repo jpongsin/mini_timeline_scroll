@@ -63,6 +63,8 @@ void init_video_processor(VideoPlayer *player, const char *path);
 void on_pad_added(GstElement *src, GstPad *new_pad, gpointer data);
 
 void init_idle_pipeline(VideoPlayer *player);
+
+void switch_audio_stream(VideoPlayer *player, int stream_index);
 #ifdef __cplusplus
 }
 #endif

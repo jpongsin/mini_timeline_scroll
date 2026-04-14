@@ -15,9 +15,9 @@
 class VideoWindow;
 
 //links to video_window.cpp
-extern"C" {
-#include <libavformat/avformat.h>
+extern "C" {
 #include <gst/video/videooverlay.h>
+#include <libavformat/avformat.h>
 }
 
 // VideoSurface: plain native widget reserved entirely for GStreamer
@@ -38,7 +38,7 @@ bool handle_hotkeys(QKeyEvent *event, VideoPlayer *player, VideoWindow *window);
 
 class VideoWindow : public QWidget {
 public:
-    VideoPlayer player;
+    VideoPlayer player{};
 
     VideoWindow(int argc, char *argv[], QWidget *parent = nullptr);
     ~VideoWindow();
@@ -50,7 +50,6 @@ public:
     void helpMenu(QMenuBar *menuBar);
 
     void open_file_dialog();
-    void probeAudio(AVFormatContext *streamCtx);
     void load_new_video(const QString &fileName);
     void close_recent_video();
     void export_screenshot();
@@ -65,8 +64,8 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) override;
 
 private:
-    bool isFullscreenActive;
-    bool isAutohideActive;
+    bool isFullscreenActive{};
+    bool isAutohideActive{};
 
     void showUI();   // restore all UI elements, stop hide timer
     void hideUI();   // hide menubar + toolbar + statusLabel, keep timecode
@@ -75,7 +74,7 @@ private:
     void refreshVideoRect();
 
     QLabel       *statusLabel;
-    QAction      *closeVideoAction;
+    QAction      *closeVideoAction{};
     QVBoxLayout  *layout;
     VideoSurface *videoSurface;
     QLabel       *timecodeLabel;
