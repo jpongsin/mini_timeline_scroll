@@ -31,8 +31,12 @@ add_executable(mini_timeline_scroll src/main.cpp
         src/video_backend.c
         src/MainWindowActions.cpp
 )
-target_compile_options(mini_timeline_scroll PRIVATE "-Wall" "-Wextra" "-Wpedantic")
 
+if(MSVC)
+    target_compile_options(mini_timeline_scroll PRIVATE /W4)
+else()
+    target_compile_options(mini_timeline_scroll PRIVATE -Wall -Wextra -Wpedantic)
+endif()
 
 if(WIN32)
     set(MPV_LINKLIB mpv::mpv)
