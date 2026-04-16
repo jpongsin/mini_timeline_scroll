@@ -35,11 +35,16 @@ jobs:
       uses: actions/checkout@v4
 
     #install Qt
+    #this program uses new syntaxes which breaks Qt versions < 6.3.0
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
       with:
         version: '6.3.0'
         
+    #vulkan
+    - name: Setup Vulkan SDK
+      uses: humbletim/setup-vulkan-sdk@v1.2.1
+  
     #unix dependencies
     - name: Install Dependencies
       run: |
@@ -52,6 +57,12 @@ jobs:
         fi
       shell: bash
 
+    #windows
+    - name: Install libmpv via vcpkg
+      if: runner.os == 'Windows'
+      run: vcpkg install mpv
+
+
     - name: Configure CMake
       # Using -B for build directory and -S for source
       run: >
@@ -59,6 +70,7 @@ jobs:
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        ${{ runner.os == 'Windows' && '-DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake' || '' }}
         -S ${{ github.workspace }}
 
     - name: Build
