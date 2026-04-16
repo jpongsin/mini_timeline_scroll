@@ -109,8 +109,8 @@ jobs:
       shell: bash
       run: | 
         BUILD_DIR=$(cygpath -u "${{ github.workspace }}" 2>/dev/null || echo "${{ github.workspace }}")/build
-        cmake --build ${{ github.workspace }}/build --config ${{ matrix.build_type }}
-
+        cmake --build "$BUILD_DIR" --config ${{ matrix.build_type }}
+        
     - name: Test
       working-directory: ${{ github.workspace }}/build
       shell: bash
