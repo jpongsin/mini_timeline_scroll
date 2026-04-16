@@ -259,6 +259,6 @@ jobs:
           Automated rolling release from the latest commit on main.
           Built on ${{ github.run_id }} — ${{ github.sha }}
         files: |
-          artifacts/linux-appimage/mini_timeline_scroll-linux.AppImage
+          artifacts/linux-appimage/Mini_Timeline_Scroll-x86_64.AppImage
           artifacts/windows-zip/mini_timeline_scroll-windows.zip
           artifacts/macos-dmg/mini_timeline_scroll-macos.dmg
