@@ -16,11 +16,12 @@
 class MainWindow : public QMainWindow {
   Q_OBJECT
 public:
-  explicit MainWindow(QWidget *parent = nullptr);
+  explicit MainWindow(int argc, char* argv[], QWidget *parent = nullptr);
   ~MainWindow() override;
 
 private slots:
   void openVideo();
+  void openVideoCLI(const QString &fileName) ;
   void closeVideo();
   void updateUI();
   void updateWindowShortcuts();
