@@ -32,6 +32,23 @@ void MainWindow::openVideo() {
   }
 }
 
+void MainWindow::openVideoCLI(const QString &fileName) {
+  if (fileName.isEmpty()) return;
+
+  QByteArray utf8 = fileName.toUtf8();
+  const char *cmd[] = {"loadfile", utf8.constData(), "replace", NULL};
+  mpv_command(m_mpv, cmd);
+
+  m_playbackMenu->setEnabled(true);
+  updateWindowShortcuts();
+  mpv_set_property_string(m_mpv, "video-aspect-override", "-1");
+  m_lastVideoDir = QFileInfo(fileName).absolutePath();
+  m_videoWidget->loadFile(fileName);
+  m_audioMenu->clear();
+  m_audioMenu->setEnabled(true);
+  m_fpsLabel->setText("FPS: N/A"); // Reset until metadata probed
+}
+
 void MainWindow::populateAudioMenu(const VideoState &vs) {
   //clear audio
   m_audioMenu->clear();

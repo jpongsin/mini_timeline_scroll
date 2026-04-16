@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
 
   a.setPalette(darkPalette);
 
-  MainWindow w;
+  MainWindow w(argc, argv);
   w.show();
 
   return a.exec();

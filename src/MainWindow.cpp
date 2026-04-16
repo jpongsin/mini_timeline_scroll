@@ -14,7 +14,7 @@
 #include <QVBoxLayout>
 #include <cmath>
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
+MainWindow::MainWindow(int argc, char* argv[], QWidget *parent) : QMainWindow(parent) {
     setWindowTitle("Mini Timeline Scroll");
     resize(1280, 800);
 
@@ -48,10 +48,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     //check if mpv is installed
     if (m_mpv) {
         // initial state loads SMPTE bars
-        QTimer::singleShot(0, this, [this]() {
+        QTimer::singleShot(0, this, [this, argc, argv]() {
             mpv_set_property_string(m_mpv, "video-aspect-override", "16:9");
             m_seekSlider->setEnabled(false);
             load_file(m_mpv, "av://lavfi:smptehdbars");
+            if (argc > 1) {
+                QTimer::singleShot(250,
+                       [this, argv]() {
+                           openVideoCLI(QString::fromUtf8(argv[1]));
+                       });
+}
         });
 
         //update the UI
