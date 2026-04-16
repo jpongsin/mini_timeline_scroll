@@ -66,16 +66,25 @@ jobs:
       if: runner.os == 'Windows'
       shell: bash
       run: |
-        LIBMPV_VER=$(curl -s "https://sourceforge.net" | grep -om1 "https://sourceforge.net/projects/mpv-player-windows/files/libmpv/mpv-dev-x86_64-[^\"]*" | head -n 1)
-        NEW_URL="${LIBMPV_VER}/download"
-      
-        echo "Downloading from: $NEW_URL"
-        curl -L "$NEW_URL" -o mpv-dev.7z
+        SEARCH_URL="https://sourceforge.net/projects/mpv-player-windows/files/libmpv/"
         
-        7z x mpv-dev.7z -o"${{ github.workspace }}/mpv-dev"
+        #check version
+        LIBMPV_FILE=$(curl -sL "$SEARCH_URL" | grep -om1 "mpv-dev-x86_64-[0-9a-z-]*\.7z" | head -n 1) || true
+        
+        if [ -z "$LIBMPV_FILE" ]; then
+          echo "Error: libmpv version not found at $SEARCH_URL"
+          exit 1
+        fi
+    
+        DOWNLOAD_URL="https://sourceforge.net{LIBMPV_FILE}/download"
+        echo "Downloading from: $DOWNLOAD_URL"
+        curl -L "$DOWNLOAD_URL" -o mpv-dev.7z
+        
+
+        7z x mpv-dev.7z -o"${{ github.workspace }}/mpv-dev" -y
         echo "mpv_DIR=${{ github.workspace }}/mpv-dev" >> $GITHUB_ENV
 
-
+    
     - name: Configure CMake
       # Using -B for build directory and -S for source
       run: >
