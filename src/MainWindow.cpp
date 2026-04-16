@@ -13,7 +13,6 @@
 #include <QStatusBar>
 #include <QVBoxLayout>
 #include <cmath>
-#include <functional>
 
 MainWindow::MainWindow(int argc, char* argv[], QWidget *parent) : QMainWindow(parent) {
     setWindowTitle("Mini Timeline Scroll");
@@ -302,13 +301,13 @@ QString MainWindow::formatTimecode(double seconds, double fps) {
     if (fps <= 0)
         return "00:00:00:00";
 
-    std::function<bool(double, double)> near = [](double a, double b) {
+    auto checkboolFPS = [](double a, double b) {
         return std::abs(a - b) < 0.001;
     };
 
     //timecode
-    bool isNTSC = near(fps, 30000.0 / 1001.0);
-    bool isNTSCDouble = near(fps, 60000.0 / 1001.0);
+    bool isNTSC = checkboolFPS(fps, 30000.0 / 1001.0);
+    bool isNTSCDouble = checkboolFPS(fps, 60000.0 / 1001.0);
     bool dropFrame = isNTSC || isNTSCDouble;
 
     int nominalFps = (int)std::round(fps); // 30 or 60
