@@ -60,8 +60,8 @@ to zoom a video:
 
 other features:
 * b, screenshot a frame
-* f. fullscreen
-* f11, autohide toolbar
+* f, f11. fullscreen
+* h, autohide toolbar
 
 Fortunately, you can exit the video window, meaning the application will exit and terminate.\
 You can also use the mouse to navigate the file menu. There will be clickable features at some point.
