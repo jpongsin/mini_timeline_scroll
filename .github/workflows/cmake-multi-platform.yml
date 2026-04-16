@@ -37,7 +37,7 @@ jobs:
     #install Qt
     #this program uses new syntaxes which breaks Qt versions < 6.3.0
     - name: Install Qt
-      uses: jurplel/install-qt-action@v3
+      uses: jurplel/install-qt-action@v4
       with:
         version: '6.3.0'
 
@@ -67,13 +67,14 @@ jobs:
       shell: bash
       run: |
         VERSION="mpv-x86_64-v3-20260412-git-062f4bf.7z"
-        URL="https://download.sourceforge.net/project/mpv-winbuilder/stable/${VERSION}"
-            
-        echo "Downloading: $URL"
-        curl -L "$URL" -o mpv-dev.7z
+      
+        wget --header="Accept: application/octet-stream" \
+             --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" \
+             "https://sourceforge.net/projects/mpv-winbuilder/files/stable/${VERSION}/download" \
+             -O mpv-dev.7z
         
         7z x mpv-dev.7z -o"${{ github.workspace }}/mpv-dev" -y
-        echo "mpv_DIR=${{ github.workspace }}/mpv-dev" >> $GITHUB_ENV
+        echo "mpv_DIR=${{ github.workspace }}/mpv-dev" >> $GITHUB_EN
 
     
     - name: Configure CMake
