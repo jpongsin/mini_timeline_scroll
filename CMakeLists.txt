@@ -15,7 +15,8 @@ if(WIN32)
     add_library(mpv::mpv UNKNOWN IMPORTED)
     set_target_properties(mpv::mpv PROPERTIES
         IMPORTED_LOCATION "${MPV_LIBRARY}"
-        INTERFACE_INCLUDE_DIRECTORIES "${MPV_INCLUDE_DIR}")
+        INTERFACE_INCLUDE_DIRECTORIES "${MPV_INCLUDE_DIR}"
+    )
 else()
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(MPV REQUIRED IMPORTED_TARGET mpv)
@@ -34,21 +35,17 @@ target_compile_options(mini_timeline_scroll PRIVATE "-Wall" "-Wextra" "-Wpedanti
 
 
 if(WIN32)
-target_link_libraries(mini_timeline_scroll PRIVATE
-        Qt6::Core
-        Qt6::Gui
-        Qt6::Widgets
-        Qt6::OpenGL
-        Qt6::OpenGLWidgets
-        mpv::MPV)
+    set(MPV_LINKLIB mpv::mpv)
 else()
-target_link_libraries(mini_timeline_scroll PRIVATE
-        Qt6::Core
-        Qt6::Gui
-        Qt6::Widgets
-        Qt6::OpenGL
-        Qt6::OpenGLWidgets
-        PkgConfig::MPV)
+    set(MPV_LINKLIB PkgConfig::MPV)
 endif()
+
+target_link_libraries(mini_timeline_scroll PRIVATE
+    Qt6::Core
+    Qt6::Gui
+    Qt6::Widgets
+    Qt6::OpenGL
+    Qt6::OpenGLWidgets
+    ${MPV_LINKLIB})
 
 
