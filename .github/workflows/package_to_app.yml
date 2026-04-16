@@ -133,12 +133,12 @@ jobs:
           mkdir -p AppDir/usr/share/applications
           mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
           cat > AppDir/usr/share/applications/mini_timeline_scroll.desktop << EOF
-          [Desktop Entry]
-          Name=Mini Timeline Scroll
-          Exec=mini_timeline_scroll
-          Icon=mini_timeline_scroll
-          Type=Application
-          Categories=Utility;
+            [Desktop Entry]
+            Name=Mini Timeline Scroll
+            Exec=mini_timeline_scroll
+            Icon=mini_timeline_scroll
+            Type=Application
+            Categories=Utility;
           EOF
           convert -size 256x256 xc:transparent AppDir/usr/share/icons/hicolor/256x256/apps/mini_timeline_scroll.png 2>/dev/null || \
             curl -L -o AppDir/usr/share/icons/hicolor/256x256/apps/mini_timeline_scroll.png \
