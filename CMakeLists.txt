@@ -10,7 +10,7 @@ find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets OpenGL OpenGLWidgets)
 
 if(WIN32)
     set(MPV_INCLUDE_DIR "${LIBMPV_PATH}/include")
-    set(MPV_LIBRARY "${LIBMPV_PATH}/lib/mpv.lib")
+    set(MPV_LIBRARY "${LIBMPV_PATH}/mpv.lib")
 
     add_library(mpv::mpv UNKNOWN IMPORTED)
     set_target_properties(mpv::mpv PROPERTIES
