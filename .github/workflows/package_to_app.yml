@@ -219,7 +219,8 @@ jobs:
       uses: actions/upload-artifact@v7.0.1
       with:
         name: linux-appimage
-        path: mini_timeline_scroll-linux.AppImage
+        path: Mini_Timeline_Scroll-x86_64.AppImage 
+        
 
     - name: Upload Artifact (Windows)
       if: runner.os == 'Windows'
