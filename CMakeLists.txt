@@ -32,6 +32,8 @@ add_executable(mini_timeline_scroll src/main.cpp
 )
 target_compile_options(mini_timeline_scroll PRIVATE "-Wall" "-Wextra" "-Wpedantic")
 
+
+if(WIN32)
 target_link_libraries(mini_timeline_scroll PRIVATE
         Qt6::Core
         Qt6::Gui
@@ -39,3 +41,14 @@ target_link_libraries(mini_timeline_scroll PRIVATE
         Qt6::OpenGL
         Qt6::OpenGLWidgets
         mpv::MPV)
+else()
+target_link_libraries(mini_timeline_scroll PRIVATE
+        Qt6::Core
+        Qt6::Gui
+        Qt6::Widgets
+        Qt6::OpenGL
+        Qt6::OpenGLWidgets
+        PkgConfig::MPV)
+endif()
+
+
