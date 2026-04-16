@@ -62,19 +62,10 @@ jobs:
       shell: bash
 
     #windows
-    - name: Install libmpv, Windows
-      if: runner.os == 'Windows'
-      shell: bash
-      run: |
-        VERSION="mpv-x86_64-v3-20260412-git-062f4bf.7z"
-      
-        wget --header="Accept: application/octet-stream" \
-             --user-agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" \
-             "https://sourceforge.net/projects/mpv-winbuilder/files/stable/${VERSION}/download" \
-             -O mpv-dev.7z
-        
-        7z x mpv-dev.7z -o"${{ github.workspace }}/mpv-dev" -y
-        echo "mpv_DIR=${{ github.workspace }}/mpv-dev" >> $GITHUB_EN
+    
+    - name: mpv-win-build
+      uses: skbeh/mpv-winbuild-action@v0.4
+          
 
     
     - name: Configure CMake
