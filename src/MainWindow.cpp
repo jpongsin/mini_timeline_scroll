@@ -388,7 +388,7 @@ void MainWindow::updateUI() {
     VideoState vs = m_videoWidget->getMetadata();
     m_filenameLabel->setText(isIdle ? "No file loaded. Open a video to begin." : vs.filename);
     m_filenameLabel->setStyleSheet(
-        "background-color: #222; color: #aaa; padding: 5px; font-style: italic;");
+        "padding: 5px; font-style: italic;");
 
     //fps
     m_fps = vs.fps;

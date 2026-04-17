@@ -6,6 +6,7 @@
 #include "../include/MainWindow.h"
 #include <QApplication>
 #include <clocale>
+#include <QStyleFactory>
 
 int main(int argc, char *argv[]) {
   QApplication a(argc, argv);
@@ -14,6 +15,8 @@ int main(int argc, char *argv[]) {
   // since libmpv is being used, overrule them
   setlocale(LC_NUMERIC, "C");
 
+  a.setStyle(QStyleFactory::create("windowsvista"));
+  /*
   QPalette darkPalette;
   darkPalette.setColor(QPalette::Window, QColor(30, 30, 30));
   darkPalette.setColor(QPalette::WindowText, Qt::white);
@@ -30,6 +33,7 @@ int main(int argc, char *argv[]) {
   darkPalette.setColor(QPalette::HighlightedText, Qt::black);
 
   a.setPalette(darkPalette);
+    */
 
   MainWindow w(argc, argv);
   w.show();
