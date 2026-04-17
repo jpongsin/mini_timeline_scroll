@@ -7,12 +7,13 @@ to make previous versions available for comparison.
 
 ## [0.2.0] - 2026-04-17
 ### Added
+- Limited support for Windows 10 (Tested working)
 - Feature to disable hotkeys when app is in idle state and has no loaded videos
 - libmpv parameters to pause the idle video for performance tweaks
 - Feature to set screenshot folder
 - Feature to toggle uninterrupted mode for screenshot functionality
 - Codec details (useful for debug)
-- Limited support for Windows 10 (Tested working)
+
 
 ### Changed
 - Migrated from gstreamer to libmpv to leverage wider compatibility of video formats
@@ -27,13 +28,16 @@ to make previous versions available for comparison.
 - Made window scaleable again
   
 ### Removed
+- XWayland workaround. Support for Wayland is official. (Tested working on Linux with Wayland)
 - Platform specific image formats; for now, sticking to png, webp, jpg and tiff for cross-platform
 - Dark GUI style. Program defaults to Qt6's system colors. In testing varying platforms, Windows 10 was the only platform that was not responsive to the initial UI styling. It will be brought back in later versions.
-- XWayland workaround. Support for Wayland is official. (Tested working on Linux with Wayland)
+
 
 ## [0.1.0] - 2026-04-14
 
 ### Added
+- Support for FreeBSD (tested working)
+- Limited Wayland support with XWayland; initial testing showed that gstreamer was not responsive to Qt6 in Wayland, but was stable in X11 and Cocoa.
 - Ability to change audio tracks
 - Hardware and software acceleration
 - Open file menu
@@ -44,8 +48,6 @@ to make previous versions available for comparison.
 - Zoom features with accompanying hotkeys (i for shrink, o for reset, p for enlarge)
 - Pan features with accompanying hotkeys (w for pan up, s for pan down, a for pan left, d for pan right)
 - FPS indicator on top bar
-- Support for FreeBSD (tested working)
-- Limited Wayland support with XWayland; initial testing showed that gstreamer was not responsive to Qt6 in Wayland, but was stable in X11 and Cocoa.
 - Attempted prioritizing codecs in order to leverage wider compatibility of video formats
 
 ### Changed
@@ -62,7 +64,7 @@ to make previous versions available for comparison.
 ## [0.0.0] - 2026-03-26
 
 ### Added
-
+- Initial support for Linux
 - GTK GUI in C++
 - Dark GUI style
 - gstreamer overlay in C; original intent was to tailor video stream to multiple platforms, optimize for high resolution videos and make room for other features
@@ -70,7 +72,7 @@ to make previous versions available for comparison.
 - Keyboard hotkeys to trigger playback, scroll, mute, rewind back, and fullscreen
 - Carried over an ffmpeg metadata retrieval implementation from repo [jpongsin/metadata_fetch] and refactored source code into a retrieval task that returns fps information for the GUI to handle
 - Timecode on a GTK GUI to monitor video duration
-- Initial support for Linux
+
 
 [0.2.0]: https://github.com/jpongsin/mini_timeline_scroll/compare/stable..prototype
 [0.1.0]: https://github.com/jpongsin/mini_timeline_scroll/compare/prototype..legacy
