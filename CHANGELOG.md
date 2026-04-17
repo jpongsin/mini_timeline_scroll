@@ -25,7 +25,7 @@ to make previous versions available for comparison.
 - Platform specific image formats; for now, sticking to png, webp, jpg and tiff.
 - Dark GUI style. Program defaults to Qt6's system colors.
 
-## [0.1.0] - 2014-04-14
+## [0.1.0] - 2026-04-14
 
 ### Added
 - Ability to change audio tracks
