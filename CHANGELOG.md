@@ -12,10 +12,12 @@ to make previous versions available for comparison.
 - Feature to set screenshot folder
 - Feature to toggle uninterrupted mode for screenshot functionality
 - Codec details (useful for debug)
+- Limited support for Windows 10 (Tested working)
 
 ### Changed
 - Migrated from gstreamer to libmpv to leverage wider compatibility of video formats
 - As a result of the migration to libmpv, the codes have been condensed to allow finetuning of other features
+- By using libmpv and Qt6, the responsiveness of windows opening and closing has improved crossplatform. On v0.1.0 gstreamer and Qt6 communicated adequately in this area on Linux and FreeBSD, but MacOS returned an unsuccessful close and subsequently unsuccessful and unpredictable opening app behavior.
 - Zoom and pan now visible whether playing or pausing video
 - Hardware and software acceleration is now toggled at the file menu
 - Fine tuned zoom and pan features
@@ -26,7 +28,8 @@ to make previous versions available for comparison.
   
 ### Removed
 - Platform specific image formats; for now, sticking to png, webp, jpg and tiff for cross-platform
-- Dark GUI style. Program defaults to Qt6's system colors.
+- Dark GUI style. Program defaults to Qt6's system colors. In testing varying platforms, Windows 10 was the only platform that was not responsive to the initial UI styling. It will be brought back in later versions.
+- XWayland workaround. Support for Wayland is official. (Tested working on Linux with Wayland)
 
 ## [0.1.0] - 2026-04-14
 
@@ -41,10 +44,14 @@ to make previous versions available for comparison.
 - Zoom features with accompanying hotkeys (i for shrink, o for reset, p for enlarge)
 - Pan features with accompanying hotkeys (w for pan up, s for pan down, a for pan left, d for pan right)
 - FPS indicator on top bar
+- Support for FreeBSD (tested working)
+- Limited Wayland support with XWayland; initial testing showed that gstreamer was not responsive to Qt6 in Wayland, but was stable in X11 and Cocoa.
+- Attempted prioritizing codecs in order to leverage wider compatibility of video formats
 
 ### Changed
 
 - Migrated from GTK to Qt6 to keep UI design consistent after successful build but botched runtime on MacOS from v0.0.0.
+- Reinforced MacOS support (building and compiling from source is recommended)
 - Enlarged timecode
 - Constrained window to video overlay for GUI
   
@@ -63,6 +70,7 @@ to make previous versions available for comparison.
 - Keyboard hotkeys to trigger playback, scroll, mute, rewind back, and fullscreen
 - Carried over an ffmpeg metadata retrieval implementation from repo [jpongsin/metadata_fetch] and refactored source code into a retrieval task that returns fps information for the GUI to handle
 - Timecode on a GTK GUI to monitor video duration
+- Initial support for Linux
 
 [0.2.0]: https://github.com/jpongsin/mini_timeline_scroll/compare/stable..prototype
 [0.1.0]: https://github.com/jpongsin/mini_timeline_scroll/compare/prototype..legacy
