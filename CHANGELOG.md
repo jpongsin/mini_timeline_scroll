@@ -20,7 +20,7 @@ to make previous versions available for comparison.
 - Hardware and software acceleration is now toggled at the file menu
 - Fine tuned zoom and pan features
 - Reassigned autohide UI hotkey to h
-- Reassigned zoom hotokeys; i for reset, o for shrink, and p for enlarge
+- Reassigned zoom hotkeys; i for reset, o for shrink, and p for enlarge
 - Moved timecode to the bottom left to make room for the scrolling bar
 - Made window scaleable again
   
