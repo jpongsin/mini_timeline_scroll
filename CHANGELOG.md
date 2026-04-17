@@ -15,14 +15,17 @@ to make previous versions available for comparison.
 
 ### Changed
 - Migrated from gstreamer to libmpv to leverage wider compatibility of video formats
+- As a result of the migration to libmpv, the codes have been condensed to allow finetuning of other features
 - Zoom and pan now visible whether playing or pausing video
 - Hardware and software acceleration is now toggled at the file menu
 - Fine tuned zoom and pan features
 - Reassigned autohide UI hotkey to h
 - Reassigned zoom hotokeys; i for reset, o for shrink, and p for enlarge
+- Moved timecode to the bottom left to make room for the scrolling bar
+- Made window scaleable again
   
 ### Removed
-- Platform specific image formats; for now, sticking to png, webp, jpg and tiff.
+- Platform specific image formats; for now, sticking to png, webp, jpg and tiff for cross-platform
 - Dark GUI style. Program defaults to Qt6's system colors.
 
 ## [0.1.0] - 2026-04-14
@@ -33,7 +36,7 @@ to make previous versions available for comparison.
 - Open file menu
 - Idle state video when no video is loaded
 - Ability to close video and retain window (Ctrl+W) until user quits program (Ctrl+Q)
-- Screenshot feature
+- Screenshot feature 
 - Autohide UI assigned to F11
 - Zoom features with accompanying hotkeys (i for shrink, o for reset, p for enlarge)
 - Pan features with accompanying hotkeys (w for pan up, s for pan down, a for pan left, d for pan right)
@@ -41,7 +44,9 @@ to make previous versions available for comparison.
 
 ### Changed
 
-- Migrated from GTK to Qt6 to keep UI design consistent after successful build but botched runtime on MacOS from v0.0.0
+- Migrated from GTK to Qt6 to keep UI design consistent after successful build but botched runtime on MacOS from v0.0.0.
+- Enlarged timecode
+- Constrained window to video overlay for GUI
   
 ### Removed
 
@@ -56,10 +61,10 @@ to make previous versions available for comparison.
 - gstreamer overlay in C; original intent was to tailor video stream to multiple platforms, optimize for high resolution videos and make room for other features
 - Command line argument to play video e.g. "./mini_timeline_scroll sample.mov"
 - Keyboard hotkeys to trigger playback, scroll, mute, rewind back, and fullscreen
-- Carried over an ffmpeg metadata retrieval implementation from [repo metadata_fetch] and refactored main.c into video_fetch.c
+- Carried over an ffmpeg metadata retrieval implementation from repo [jpongsin/metadata_fetch] and refactored source code into a retrieval task that returns fps information for the GUI to handle
 - Timecode on a GTK GUI to monitor video duration
 
 [0.2.0]: https://github.com/jpongsin/mini_timeline_scroll/compare/stable..prototype
 [0.1.0]: https://github.com/jpongsin/mini_timeline_scroll/compare/prototype..legacy
-[repo metadata_fetch]: https://github.com/jpongsin/metadata_fetch
+[jpongsin/metadata_fetch]: https://github.com/jpongsin/metadata_fetch
 [0.0.0]: https://github.com/jpongsin/mini_timeline_scroll/releases/tag/legacy
