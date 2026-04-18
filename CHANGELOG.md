@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file. \
 Note that the first three versions (0.0.0 - 0.2.0) were simultaneously released on April 17, 2026\
 to make previous versions available for comparison.
 
+## [0.3.0] - 2026-04-18
+### Added
+- Ability to interact with subtitles; load a video with pre-existing subtitles, import an external subtitle and delete an external subtitle. Tested on mp4 and mkv videos.
+
+### Changed
+- Fixed memory issues with libmpv metadata retrieval from importing video.
+- Refactored handling of audio and subtitle implementations in Qt GUI context and backend context for better troubleshooting
+
+  
 ## [0.2.0] - 2026-04-17
 ### Added
 - Limited support for Windows 10 (Tested working)
