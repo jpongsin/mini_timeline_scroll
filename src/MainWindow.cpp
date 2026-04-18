@@ -14,7 +14,7 @@
 #include <QVBoxLayout>
 #include <cmath>
 
-MainWindow::MainWindow(int argc, char* argv[], QWidget *parent) : QMainWindow(parent) {
+MainWindow::MainWindow(int argc, char *argv[], QWidget *parent) : QMainWindow(parent) {
     setWindowTitle("Mini Timeline Scroll");
     resize(1280, 800);
 
@@ -23,6 +23,8 @@ MainWindow::MainWindow(int argc, char* argv[], QWidget *parent) : QMainWindow(pa
     m_mpv = init_backend();
     m_videoWidget = new VideoWidget(this);
     m_videoWidget->setMpvHandle(m_mpv);
+    m_audioActionGroup = nullptr;
+    m_subtitleActionGroup = nullptr;
 
     //create menu
     m_accelActionGroup = new QActionGroup(this);
@@ -54,17 +56,16 @@ MainWindow::MainWindow(int argc, char* argv[], QWidget *parent) : QMainWindow(pa
             load_file(m_mpv, "av://lavfi:smptehdbars");
             if (argc > 1) {
                 QTimer::singleShot(250,
-                       [this, argv]() {
-                           openVideoCLI(QString::fromUtf8(argv[1]));
-                       });
-}
+                                   [this, argv]() {
+                                       openVideoCLI(QString::fromUtf8(argv[1]));
+                                   });
+            }
         });
 
         //update the UI
         m_uiTimer = new QTimer(this);
         connect(m_uiTimer, &QTimer::timeout, this, &MainWindow::updateUI);
         m_uiTimer->start(33);
-
     } else {
         //error message.
         QMessageBox::critical(this, "Fatal Error",
@@ -160,6 +161,10 @@ void MainWindow::createMenus() {
     //audio menu
     m_audioMenu = menuBar()->addMenu("&Audio");
     m_audioMenu->setEnabled(false);
+
+    //subtitle menu
+    m_subtitleMenu = menuBar()->addMenu("&Subtitles");
+    m_subtitleMenu->setEnabled(false);
 
     QMenu *viewMenu = menuBar()->addMenu("&View");
     viewMenu->addAction("Zoom In", Qt::Key_P, m_videoWidget,
@@ -310,9 +315,9 @@ QString MainWindow::formatTimecode(double seconds, double fps) {
     bool isNTSCDouble = checkboolFPS(fps, 60000.0 / 1001.0);
     bool dropFrame = isNTSC || isNTSCDouble;
 
-    int nominalFps = (int)std::round(fps); // 30 or 60
+    int nominalFps = (int) std::round(fps); // 30 or 60
 
-    long long totalFrames = (long long)std::floor(seconds * fps + 0.0001);
+    long long totalFrames = (long long) std::floor(seconds * fps + 0.0001);
 
     //dropframe calculation
     if (dropFrame) {
@@ -325,8 +330,8 @@ QString MainWindow::formatTimecode(double seconds, double fps) {
         long long m = totalFrames % (framesPer10Minutes - dropFrames * 9);
 
         long long dropped =
-            dropFrames * 9 * d +
-            dropFrames * ((m - dropFrames) / (framesPerMinute - dropFrames));
+                dropFrames * 9 * d +
+                dropFrames * ((m - dropFrames) / (framesPerMinute - dropFrames));
 
         if (m < dropFrames)
             dropped = dropFrames * 9 * d;
@@ -343,11 +348,11 @@ QString MainWindow::formatTimecode(double seconds, double fps) {
 
     //show timecode to UI
     return QString("%1:%2:%3%4%5")
-        .arg(h, 2, 10, QChar('0'))
-        .arg(m, 2, 10, QChar('0'))
-        .arg(s, 2, 10, QChar('0'))
-        .arg(sep)
-        .arg(f, 2, 10, QChar('0'));
+            .arg(h, 2, 10, QChar('0'))
+            .arg(m, 2, 10, QChar('0'))
+            .arg(s, 2, 10, QChar('0'))
+            .arg(sep)
+            .arg(f, 2, 10, QChar('0'));
 }
 
 void MainWindow::updateUI() {
@@ -420,5 +425,18 @@ void MainWindow::updateUI() {
 
     if (!isIdle && vs.nb_audio_tracks > 0 && m_audioMenu->isEmpty()) {
         populateAudioMenu(vs);
+    }
+
+    // Subtitle population
+    if (!isIdle) {
+        if (vs.nb_subtitle_tracks != m_lastSubtitleCount || m_subtitleMenu->isEmpty()) {
+            m_lastSubtitleCount = vs.nb_subtitle_tracks;
+            populateSubtitleMenu(vs);
+        }
+    }
+    else {
+        m_subtitleMenu->clear();
+        m_subtitleMenu->setEnabled(false);
+        m_lastSubtitleCount = -1;
     }
 }

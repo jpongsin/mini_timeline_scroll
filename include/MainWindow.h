@@ -7,6 +7,7 @@
 #define MAINWINDOW_H
 
 #include "VideoWidget.h"
+#include "SubtitleImports.h"
 #include <QCheckBox>
 #include <QLabel>
 #include <QMainWindow>
@@ -22,6 +23,12 @@ public:
 private slots:
   void openVideo();
   void openVideoCLI(const QString &fileName) ;
+  void importSubtitle();
+
+  void get_embed_subtitles(const VideoState &vs, int64_t current_sid);
+  void check_empty_subtitles(int64_t current_sid);
+  void get_imported_subtitles(const VideoState &vs, int64_t current_sid);
+
   void closeVideo();
   void updateUI();
   void updateWindowShortcuts();
@@ -49,13 +56,19 @@ private:
   void createToolbar();
   void setupShortcuts();
   void populateAudioMenu(const VideoState &vs);
+  void populateSubtitleMenu(const VideoState &vs);
+  void clearImportedCheckmarks();
+  void clearImportedCheckmarksExcept(int exceptId);
+  QString formatTrackLabel(const SubtitleTrack &track);
   QString formatTimecode(double seconds, double fps);
 
   VideoWidget *m_videoWidget;
   QMenu *m_audioMenu{};
+  QMenu *m_subtitleMenu{};
   QMenu *m_accelMenu{};
   QMenu *m_playbackMenu{};
   QActionGroup *m_audioActionGroup;
+  QActionGroup *m_subtitleActionGroup;
   QActionGroup *m_accelActionGroup;
   QAction *m_closeAction{};
   QAction *m_screenshotAction{};
@@ -86,6 +99,8 @@ private:
   mpv_handle *m_mpv;
   double m_duration = 0;
   double m_fps = 30;
+  int m_lastSubtitleCount = -1;
+
 };
 
 #endif // MAINWINDOW_H

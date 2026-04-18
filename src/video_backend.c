@@ -79,72 +79,139 @@ void seek_absolute(mpv_handle *handle, double seconds, int exact) {
 }
 
 //get video metadata
-void get_video_metadata(mpv_node track, char **type, int *id, char **lang, char **title_str) {
-  for (int j = 0; j < track.u.list->num; j++) {
-    if (strcmp(track.u.list->keys[j], "type") == 0)
-      {*type = track.u.list->values[j].u.string;}
-    if (strcmp(track.u.list->keys[j], "id") == 0)
-      {*id = track.u.list->values[j].u.int64;}
-    if (strcmp(track.u.list->keys[j], "lang") == 0)
-      {*lang = track.u.list->values[j].u.string;}
-    if (strcmp(track.u.list->keys[j], "title") == 0)
-      {*title_str = track.u.list->values[j].u.string;}
+void get_video_metadata(mpv_node *track, char **type, int *id, char **lang, char **title_str,int *external) {
+  if (!track||track->format!= MPV_FORMAT_NODE_MAP||!track->u.list) return;
+
+  for (int j = 0; j < track->u.list->num; j++) {
+    char *tempKey=track->u.list->keys[j];
+    mpv_node *tempVal=&track->u.list->values[j];
+
+    if (strcmp(tempKey, "type") == 0
+      && tempVal->format == MPV_FORMAT_STRING) {
+      *type = tempVal->u.string;
+    }
+    else if (strcmp(tempKey, "id") == 0
+      && tempVal->format == MPV_FORMAT_INT64) {
+      *id = (int)tempVal->u.int64;
+    }
+    else if (strcmp(tempKey, "lang") == 0
+      && tempVal->format == MPV_FORMAT_STRING) {
+      *lang = tempVal->u.string;
+    }
+    else if (strcmp(tempKey, "title") == 0
+      && tempVal->format == MPV_FORMAT_STRING) {
+      *title_str = tempVal->u.string;
+    }
+    else if (strcmp(tempKey, "external") == 0 && tempVal->format == MPV_FORMAT_FLAG)
+    {*external = tempVal->u.flag;}
   }
 }
 
 //get video dimensions
 void get_video_dimensions(VideoState *vs, mpv_node node) {
-  if (node.format == MPV_FORMAT_NODE_MAP) {
-    for (int i = 0; i < node.u.list->num; i++) {
-      if (strcmp(node.u.list->keys[i], "w") == 0)
-        {vs->width = node.u.list->values[i].u.int64;}
-      if (strcmp(node.u.list->keys[i], "h") == 0)
-        {vs->height = node.u.list->values[i].u.int64;}
+  if (node.format != MPV_FORMAT_NODE_MAP || !node.u.list) return;
+
+  for (int i = 0; i < node.u.list->num; i++) {
+    const char *tempKey = node.u.list->keys[i];
+    mpv_node *tempVal = &node.u.list->values[i];
+
+    //width
+    if (strcmp(tempKey, "w") == 0) {
+      if (node.u.list->values[i].format == MPV_FORMAT_INT64) {
+        vs->width = (int)tempVal->u.int64;
+      } else if (node.u.list->values[i].format == MPV_FORMAT_DOUBLE) {
+        vs->width = (int)tempVal->u.double_;
+      }
+    }
+
+    //height
+    if (strcmp(tempKey, "h") == 0) {
+      if (node.u.list->values[i].format == MPV_FORMAT_INT64) {
+        vs->height = (int)tempVal->u.int64;
+      } else if (node.u.list->values[i].format == MPV_FORMAT_DOUBLE) {
+        vs->height = (int)tempVal->u.double_;
+      }
     }
   }
 }
 
 //get audio metadata
 void get_audio_metadata(VideoState *vs, char *type, int id, char *lang, char *title_str) {
-  if (type && strcmp(type, "audio") == 0 && vs->nb_audio_tracks < 16) {
-    vs->audio_tracks[vs->nb_audio_tracks].index = id;
-    if (lang)
-      strncpy(vs->audio_tracks[vs->nb_audio_tracks].language, lang, 15);
-    if (title_str)
-      strncpy(vs->audio_tracks[vs->nb_audio_tracks].title, title_str,
-              127);
-    vs->nb_audio_tracks++;
-  }
+  if (!vs || !type || strcmp(type, "audio") != 0 || vs->nb_audio_tracks >= 16) return;
+
+  AudioTrack *tempTrack = &vs->audio_tracks[vs->nb_audio_tracks];
+  tempTrack->index = id;
+
+  if (lang)
+    snprintf(tempTrack->language, sizeof(tempTrack->language), "%s", lang);
+  if (title_str)
+    snprintf(tempTrack->title, sizeof(tempTrack->title), "%s", title_str);
+  vs->nb_audio_tracks++;
 }
 
-void get_stream_metadata(VideoState *vs, mpv_node track) {
-  if (track.format == MPV_FORMAT_NODE_MAP) {
-    char *type = NULL;
-    int id = 0;
-    char *lang = NULL;
-    char *title_str = NULL;
+//get subtitle metadata
+void get_subtitle_metadata(VideoState *vs, char *type, int id, char *lang, char *title_str, int external) {
+  if (!vs || !type || strcmp(type, "sub") != 0 || vs->nb_subtitle_tracks >= 16) return;
 
-    //get video type, id, language, title
-    get_video_metadata(track, &type, &id, &lang, &title_str);
+  SubtitleTrack *tempTrack = &vs->subtitle_tracks[vs->nb_subtitle_tracks];
+  tempTrack->index = id;
+  tempTrack->is_external =external;
 
-    //get audio track
+  if (lang)
+   {snprintf(tempTrack->language, sizeof(tempTrack->language), "%s", lang);}
+  else {
+    tempTrack->language[0] = '\0';
+  }
+  if (title_str)
+  {  snprintf(tempTrack->title, sizeof(tempTrack->title), "%s", title_str);}
+  else {
+    tempTrack->title[0]= '\0';
+  }
+  vs->nb_subtitle_tracks++;
+}
+
+void get_stream_metadata(VideoState *vs, mpv_node *track) {
+  if (!track || track->format != MPV_FORMAT_NODE_MAP) return;
+  char *type = NULL;
+  int id = 0;
+  char *lang = NULL;
+  char *title_str = NULL;
+  int is_external = 0;
+
+  //get video type, id, language, title
+  get_video_metadata(track, &type, &id, &lang, &title_str, &is_external);
+
+  //get audio track
+  if (type&&strcmp(type,"audio")==0) {
     get_audio_metadata(vs, type, id, lang, title_str);
   }
+
+  //get subtitles
+  else if (type&&strcmp(type,"sub")==0) {
+    get_subtitle_metadata(vs, type, id, lang, title_str, is_external);
+  }
+
 }
 
 void get_multitrack_metadata(VideoState *vs, mpv_node node) {
+  if (node.format != MPV_FORMAT_NODE_ARRAY || !node.u.list) return;
+  vs->nb_audio_tracks = 0;
+
   for (int i = 0; i < node.u.list->num; i++) {
-    mpv_node track = node.u.list->values[i];
+    mpv_node *track = &node.u.list->values[i];
+
     get_stream_metadata(vs, track);
   }
 }
 
-//get overall metadata
-void get_overall_metadata(VideoState *vs, mpv_node node) {
-  if (node.format == MPV_FORMAT_NODE_ARRAY) {
-    vs->nb_audio_tracks = 0;
-    //audio tracks....
-    get_multitrack_metadata(vs, node);
+void set_subtitle_track(mpv_handle *handle, int id) {
+  if (id <= 0) {
+    // Turning subtitles off
+    mpv_set_property_string(handle, "sid", "no");
+  } else {
+    // mpv expects the ID as a string or an int64
+    int64_t sid = id;
+    mpv_set_property(handle, "sid", MPV_FORMAT_INT64, &sid);
   }
 }
 
@@ -153,7 +220,10 @@ VideoState get_metadata(mpv_handle *handle) {
 
   //get duration and fps
   mpv_get_property(handle, "duration", MPV_FORMAT_DOUBLE, &vs.duration);
-  mpv_get_property(handle, "container-fps", MPV_FORMAT_DOUBLE, &vs.fps);
+  //try handling vfr
+  if (mpv_get_property(handle, "estimated-vf-fps", MPV_FORMAT_DOUBLE, &vs.fps) < 0 || vs.fps <= 0) {
+      mpv_get_property(handle, "container-fps", MPV_FORMAT_DOUBLE, &vs.fps);
+  }
 
   //get dimensions from video-out-params
   mpv_node node;
@@ -166,14 +236,14 @@ VideoState get_metadata(mpv_handle *handle) {
   //get title
   char *title = mpv_get_property_string(handle, "media-title");
   if (title) {
-    strncpy(vs.filename, title, sizeof(vs.filename) - 1);
+    snprintf(vs.filename, sizeof(vs.filename), "%s",title);
     mpv_free(title);
   }
 
   //get codec
   char *codec = mpv_get_property_string(handle, "video-codec");
   if (codec) {
-    strncpy(vs.codec_name, codec, sizeof(vs.codec_name) - 1);
+    snprintf(vs.codec_name, sizeof(vs.codec_name), "%s", codec);
     mpv_free(codec);
   }
 
@@ -183,7 +253,7 @@ VideoState get_metadata(mpv_handle *handle) {
 
   // Track Extraction
   if (mpv_get_property(handle, "track-list", MPV_FORMAT_NODE, &node) >= 0) {
-    get_overall_metadata(&vs, node);
+    get_multitrack_metadata(&vs, node);
     mpv_free_node_contents(&node);
   }
 

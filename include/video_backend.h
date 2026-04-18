@@ -13,6 +13,13 @@ typedef struct {
 } AudioTrack;
 
 typedef struct {
+  int index;
+  char language[16];
+  char title[128];
+  int is_external;
+} SubtitleTrack;
+
+typedef struct {
   double duration;
   double fps;
   int width;
@@ -24,6 +31,12 @@ typedef struct {
   AudioTrack audio_tracks[16];
   int nb_audio_tracks;
   int current_audio_track;
+
+
+  SubtitleTrack subtitle_tracks[16];
+  int nb_subtitle_tracks;
+  int current_subtitle_track;
+
 } VideoState;
 
 #ifdef __cplusplus
@@ -34,14 +47,14 @@ extern "C" {
 mpv_handle *init_backend(void);
 void configure_mpv_handle(mpv_handle *handle);
 
+void set_subtitle_track(mpv_handle *handle, int id);
+
 // Grabs current metadata from mpv properties
 VideoState get_metadata(mpv_handle *handle);
 void get_video_dimensions(VideoState *vs, mpv_node node);
-void get_video_metadata(mpv_node track, char **type, int *id, char **lang, char **title_str);
+void get_video_metadata(mpv_node *track, char **type, int *id, char **lang, char **title_str,int *external);
 void get_audio_metadata(VideoState *vs, char *type, int id, char *lang, char *title_str);
-void get_stream_metadata(VideoState *vs, mpv_node track);
-void get_overall_metadata(VideoState *vs, mpv_node node);
-
+void get_stream_metadata(VideoState *vs, mpv_node *track);
 // Core playback controls
 void load_file(mpv_handle *handle, const char *filename);
 void toggle_pause(mpv_handle *handle);
