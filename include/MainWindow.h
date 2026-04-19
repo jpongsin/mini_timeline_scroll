@@ -17,6 +17,7 @@
 class MainWindow : public QMainWindow {
   Q_OBJECT
 public:
+  void check_loaded_video(int argc, char **argv);
   explicit MainWindow(int argc, char* argv[], QWidget *parent = nullptr);
   ~MainWindow() override;
 
@@ -57,10 +58,9 @@ private:
   void setupShortcuts();
   void populateAudioMenu(const VideoState &vs);
   void populateSubtitleMenu(const VideoState &vs);
-  void clearImportedCheckmarks();
-  void clearImportedCheckmarksExcept(int exceptId);
+
   QString formatTrackLabel(const SubtitleTrack &track);
-  QString formatTimecode(double seconds, double fps);
+  QString formatTimecode(long long totalFrames, double fps);
 
   VideoWidget *m_videoWidget;
   QMenu *m_audioMenu{};
@@ -76,6 +76,10 @@ private:
   QAction *m_accelAuto{};
   QAction *m_accelHardware{};
   QAction *m_accelSoftware{};
+
+  //calls
+  VideoState m_cachedState{};
+  bool m_metadataRefresh = true;
 
   // Screenshot state
   QString m_screenshotFolder;
@@ -94,12 +98,16 @@ private:
   QWidget *m_bottomToolbar{};
   QLabel *m_timecodeLabel{};
   QSlider *m_seekSlider{};
+  bool m_programmaticSliderUpdate = false;
+  bool m_userIsDragging = false;
+  int64_t m_totalFrames = 0;
+  int64_t m_startFrame = 0;
 
   QTimer *m_uiTimer;
   mpv_handle *m_mpv;
   double m_duration = 0;
   double m_fps = 30;
-  int m_lastSubtitleCount = -1;
+
 
 };
 

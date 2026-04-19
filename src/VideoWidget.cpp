@@ -135,7 +135,7 @@ void VideoWidget::moveRight() {
   double slick_panX = 0.005 / (m_zoom + 1.0);
   m_panX -= slick_panX;
 
-  if (m_panX > 1.0) m_panX = 1.0;
+  if (m_panX < -1.0) m_panX = -1.0;
   set_pan(m_mpv, m_panX, m_panY);
 }
 
@@ -151,7 +151,7 @@ void VideoWidget::moveDown() {
   double slick_panY = 0.005 / (m_zoom + 1.0);
   m_panY -= slick_panY;
 
-  if (m_panY > 1.0) m_panY = 1.0;
+  if (m_panY < -1.0) m_panY = -1.0;
   set_pan(m_mpv, m_panX, m_panY);
 }
 

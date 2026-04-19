@@ -1,6 +1,7 @@
-//
-// Created by jop on 4/18/26.
-//
+// mini_timeline_scroll
+//(c) 2026 jpongsin
+// Licensed under MIT License
+// See README.md and LICENSE.md for more info
 
 #ifndef MINI_TIMELINE_SCROLL_SUBTITLEIMPORTS_H
 #define MINI_TIMELINE_SCROLL_SUBTITLEIMPORTS_H

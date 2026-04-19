@@ -2,7 +2,8 @@
 //(c) 2026 jpongsin
 // Licensed under MIT License
 // See README.md and LICENSE.md for more info
-
+#ifndef VIDEO_BACKEND_H
+#define VIDEO_BACKEND_H
 #include <mpv/client.h>
 #include <mpv/render_gl.h>
 
@@ -28,12 +29,12 @@ typedef struct {
   char codec_name[64];
   int hw_accel_used;
 
-  AudioTrack audio_tracks[16];
+  AudioTrack audio_tracks[32];
   int nb_audio_tracks;
   int current_audio_track;
 
 
-  SubtitleTrack subtitle_tracks[16];
+  SubtitleTrack subtitle_tracks[32];
   int nb_subtitle_tracks;
   int current_subtitle_track;
 
@@ -55,6 +56,8 @@ void get_video_dimensions(VideoState *vs, mpv_node node);
 void get_video_metadata(mpv_node *track, char **type, int *id, char **lang, char **title_str,int *external);
 void get_audio_metadata(VideoState *vs, char *type, int id, char *lang, char *title_str);
 void get_stream_metadata(VideoState *vs, mpv_node *track);
+void get_subtitle_metadata(VideoState *vs, char *type, int id, char *lang, char *title_str, int external);
+void get_multitrack_metadata(VideoState *vs, mpv_node node);
 // Core playback controls
 void load_file(mpv_handle *handle, const char *filename);
 void toggle_pause(mpv_handle *handle);
@@ -67,4 +70,5 @@ void cleanup_backend(mpv_handle *handle);
 
 #ifdef __cplusplus
 }
+#endif
 #endif

@@ -14,6 +14,34 @@
 #include <QVBoxLayout>
 #include <cmath>
 
+void MainWindow::check_loaded_video(int argc, char **argv) {
+    if (!m_mpv) {
+        //error message.
+        QMessageBox::critical(this, "Fatal Error",
+                              "Failed to initialize libmpv backend. Check your "
+                              "installation and audio/video drivers.");
+    }
+    else {
+        // initial state loads SMPTE bars
+        QTimer::singleShot(0, this, [this, argc, argv]() {
+            mpv_set_property_string(m_mpv, "video-aspect-override", "16:9");
+            m_seekSlider->setEnabled(false);
+            load_file(m_mpv, "av://lavfi:smptehdbars");
+            if (argc > 1) {
+                QTimer::singleShot(250,
+                                   [this, argv]() {
+                                       openVideoCLI(QString::fromUtf8(argv[1]));
+                                   });
+            }
+        });
+
+        //update the UI
+        m_uiTimer = new QTimer(this);
+        connect(m_uiTimer, &QTimer::timeout, this, &MainWindow::updateUI);
+        m_uiTimer->start(33);
+    }
+}
+
 MainWindow::MainWindow(int argc, char *argv[], QWidget *parent) : QMainWindow(parent) {
     setWindowTitle("Mini Timeline Scroll");
     resize(1280, 800);
@@ -48,30 +76,7 @@ MainWindow::MainWindow(int argc, char *argv[], QWidget *parent) : QMainWindow(pa
     setupShortcuts();
 
     //check if mpv is installed
-    if (m_mpv) {
-        // initial state loads SMPTE bars
-        QTimer::singleShot(0, this, [this, argc, argv]() {
-            mpv_set_property_string(m_mpv, "video-aspect-override", "16:9");
-            m_seekSlider->setEnabled(false);
-            load_file(m_mpv, "av://lavfi:smptehdbars");
-            if (argc > 1) {
-                QTimer::singleShot(250,
-                                   [this, argv]() {
-                                       openVideoCLI(QString::fromUtf8(argv[1]));
-                                   });
-            }
-        });
-
-        //update the UI
-        m_uiTimer = new QTimer(this);
-        connect(m_uiTimer, &QTimer::timeout, this, &MainWindow::updateUI);
-        m_uiTimer->start(33);
-    } else {
-        //error message.
-        QMessageBox::critical(this, "Fatal Error",
-                              "Failed to initialize libmpv backend. Check your "
-                              "installation and audio/video drivers.");
-    }
+    check_loaded_video(argc, argv);
 }
 
 // cleanup the rendering and properly closing the window.
@@ -184,9 +189,9 @@ void MainWindow::createMenus() {
 
     //acceleration menu
     m_accelMenu = menuBar()->addMenu("&Acceleration");
-    m_accelAuto = m_accelMenu->addAction("Autodiscover");
-    m_accelHardware = m_accelMenu->addAction("[Hardware Accelerated]");
-    m_accelSoftware = m_accelMenu->addAction("[Software Rendering]");
+    m_accelAuto = m_accelMenu->addAction("Hardware Performance");
+    m_accelHardware = m_accelMenu->addAction("Hardware Stable");
+    m_accelSoftware = m_accelMenu->addAction("Software");
 
     m_accelAuto->setCheckable(true);
     m_accelHardware->setCheckable(true);
@@ -277,10 +282,18 @@ void MainWindow::createToolbar() {
     m_seekSlider = new QSlider(Qt::Horizontal, this);
     m_seekSlider->setRange(0, 10000);
 
-    //slider
+    //drag slider, mouse controlled
     connect(m_seekSlider, &QSlider::sliderMoved, this, [this](int val) {
-        double pos = (double) val / 10000.0 * m_duration;
+        if (m_duration <= 0) return;
+        double pos = (double)val / m_fps;
         seek_absolute(m_mpv, pos, 0);
+    });
+
+    //releasing slider, mouse controlled
+    connect(m_seekSlider, &QSlider::sliderReleased, this, [this]() {
+        if (m_duration <= 0) return;
+        double pos = (double)m_seekSlider->value() / m_fps;
+        seek_absolute(m_mpv, pos, 1); // exact
     });
 
     layout->addWidget(m_timecodeLabel);
@@ -301,7 +314,7 @@ void MainWindow::setupShortcuts() {
 }
 
 //calculate timecode
-QString MainWindow::formatTimecode(double seconds, double fps) {
+QString MainWindow::formatTimecode(long long totalFrames, double fps) {
     //guarding
     if (fps <= 0)
         return "00:00:00:00";
@@ -316,8 +329,6 @@ QString MainWindow::formatTimecode(double seconds, double fps) {
     bool dropFrame = isNTSC || isNTSCDouble;
 
     int nominalFps = (int) std::round(fps); // 30 or 60
-
-    long long totalFrames = (long long) std::floor(seconds * fps + 0.0001);
 
     //dropframe calculation
     if (dropFrame) {
@@ -366,10 +377,22 @@ void MainWindow::updateUI() {
     bool isIdle = m_isIdle;
     mpv_free(path);
 
+    // Refresh metadata to account for mapping of metadata
+    if (m_metadataRefresh) {
+        m_cachedState = m_videoWidget->getMetadata();
+        m_metadataRefresh = false;
+    }
+    const VideoState &vs = m_cachedState;
+    m_fps = vs.fps;
+
     //define time position and duration
     double pos = 0;
+    int64_t current_frame = 0;
+
     mpv_get_property(m_mpv, "time-pos", MPV_FORMAT_DOUBLE, &pos);
     mpv_get_property(m_mpv, "duration", MPV_FORMAT_DOUBLE, &m_duration);
+    // Get the actual frame index
+    mpv_get_property(m_mpv, "estimated-frame-number", MPV_FORMAT_INT64, &current_frame);
 
     //enable playbacks, timecode, sliders
     //else, idle video=SMPTE, disable playbacks
@@ -378,8 +401,10 @@ void MainWindow::updateUI() {
         m_closeAction->setEnabled(true);
         m_screenshotAction->setEnabled(true);
         m_assignSnapFolderAction->setEnabled(true);
-        m_seekSlider->setValue((int) (pos / m_duration * 10000.0));
-        m_timecodeLabel->setText(formatTimecode(pos, m_fps));
+        m_programmaticSliderUpdate = true;
+        m_seekSlider->setValue((int)current_frame);
+        m_programmaticSliderUpdate = false;
+        m_timecodeLabel->setText(formatTimecode(current_frame, m_fps));
     } else {
         m_seekSlider->setEnabled(false);
         m_closeAction->setEnabled(false);
@@ -390,13 +415,11 @@ void MainWindow::updateUI() {
     }
 
     //name of video
-    VideoState vs = m_videoWidget->getMetadata();
     m_filenameLabel->setText(isIdle ? "No file loaded. Open a video to begin." : vs.filename);
     m_filenameLabel->setStyleSheet(
         "padding: 5px; font-style: italic;");
 
-    //fps
-    m_fps = vs.fps;
+    //fps label
     m_fpsLabel->setText(
         isIdle
             ? " "
@@ -429,14 +452,12 @@ void MainWindow::updateUI() {
 
     // Subtitle population
     if (!isIdle) {
-        if (vs.nb_subtitle_tracks != m_lastSubtitleCount || m_subtitleMenu->isEmpty()) {
-            m_lastSubtitleCount = vs.nb_subtitle_tracks;
+        if (m_subtitleMenu->isEmpty()) {
             populateSubtitleMenu(vs);
         }
     }
     else {
         m_subtitleMenu->clear();
         m_subtitleMenu->setEnabled(false);
-        m_lastSubtitleCount = -1;
     }
 }

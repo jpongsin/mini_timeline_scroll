@@ -8,7 +8,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
+#define MAX_AUDIO_TRACKS 32
+#define MAX_SUBTITLE_TRACKS 32
 void configure_mpv_handle(mpv_handle *handle) {
   //cache
   mpv_set_option_string(handle, "demuxer-max-bytes", "5%");
@@ -18,15 +21,17 @@ void configure_mpv_handle(mpv_handle *handle) {
   mpv_set_option_string(handle, "hr-seek", "yes");
   mpv_set_option_string(handle, "hr-seek-framedrop", "no");
   mpv_set_option_string(handle, "vd-lavc-threads", "0");
+  mpv_set_option_string(handle, "framedrop", "vo");
 
   //rendering
   mpv_set_option_string(handle, "hwdec", "auto-safe");
   mpv_set_option_string(handle, "vo", "libmpv");
   mpv_set_option_string(handle, "vd-lavc-dr", "no");
   mpv_set_option_string(handle, "video-sync", "display-resample");
-  mpv_set_option_string(handle, "interpolation", "yes");
-
-  //
+  mpv_set_option_string(handle, "interpolation", "no");
+  mpv_set_option_string(handle, "vd-lavc-software-fallback", "yes");
+  mpv_set_option_string(handle, "gpu-sw-swapchain-depth", "1");
+  mpv_set_option_string(handle, "video-output-levels", "auto");
   mpv_set_option_string(handle, "video-timing-offset", "0");
   mpv_set_option_string(handle, "config", "no"); // Prevent user input.conf fighting
 
@@ -58,7 +63,10 @@ mpv_handle *init_backend(void) {
 //literally loads file
 void load_file(mpv_handle *handle, const char *filename) {
   const char *cmd[] = {"loadfile", filename, NULL};
-  mpv_command(handle, cmd);
+  const int ret= mpv_command(handle, cmd);
+  if (ret<0) {
+    fprintf(stderr, "Failed to load: %s\n", mpv_error_string(ret));
+  }
 }
 
 //pause video directly
@@ -72,9 +80,10 @@ void toggle_pause(mpv_handle *handle) {
 //seek frames or seconds
 void seek_absolute(mpv_handle *handle, double seconds, int exact) {
   char buf[64];
-  snprintf(buf, sizeof(buf), "%f", seconds);
-  const char *cmd[] = {"seek", buf, "absolute", exact ? "exact" : "keyframes",
-                       NULL};
+  snprintf(buf, sizeof(buf), "%.4f", seconds);
+  const char *mode = exact ? "absolute+exact" : "absolute+keyframes";
+  const char *cmd[] = {"seek", buf, mode, NULL};
+
   mpv_command(handle, cmd);
 }
 
@@ -137,7 +146,7 @@ void get_video_dimensions(VideoState *vs, mpv_node node) {
 
 //get audio metadata
 void get_audio_metadata(VideoState *vs, char *type, int id, char *lang, char *title_str) {
-  if (!vs || !type || strcmp(type, "audio") != 0 || vs->nb_audio_tracks >= 16) return;
+  if (!vs || !type || strcmp(type, "audio") != 0 || vs->nb_audio_tracks >= MAX_AUDIO_TRACKS) return;
 
   AudioTrack *tempTrack = &vs->audio_tracks[vs->nb_audio_tracks];
   tempTrack->index = id;
@@ -151,7 +160,7 @@ void get_audio_metadata(VideoState *vs, char *type, int id, char *lang, char *ti
 
 //get subtitle metadata
 void get_subtitle_metadata(VideoState *vs, char *type, int id, char *lang, char *title_str, int external) {
-  if (!vs || !type || strcmp(type, "sub") != 0 || vs->nb_subtitle_tracks >= 16) return;
+  if (!vs || !type || strcmp(type, "sub") != 0 || vs->nb_subtitle_tracks >= MAX_SUBTITLE_TRACKS) return;
 
   SubtitleTrack *tempTrack = &vs->subtitle_tracks[vs->nb_subtitle_tracks];
   tempTrack->index = id;
@@ -196,6 +205,7 @@ void get_stream_metadata(VideoState *vs, mpv_node *track) {
 void get_multitrack_metadata(VideoState *vs, mpv_node node) {
   if (node.format != MPV_FORMAT_NODE_ARRAY || !node.u.list) return;
   vs->nb_audio_tracks = 0;
+  vs->nb_subtitle_tracks = 0;
 
   for (int i = 0; i < node.u.list->num; i++) {
     mpv_node *track = &node.u.list->values[i];
@@ -219,17 +229,56 @@ VideoState get_metadata(mpv_handle *handle) {
   VideoState vs = {0};
 
   //get duration and fps
-  mpv_get_property(handle, "duration", MPV_FORMAT_DOUBLE, &vs.duration);
-  //try handling vfr
-  if (mpv_get_property(handle, "estimated-vf-fps", MPV_FORMAT_DOUBLE, &vs.fps) < 0 || vs.fps <= 0) {
-      mpv_get_property(handle, "container-fps", MPV_FORMAT_DOUBLE, &vs.fps);
+  // check return values...
+  if (mpv_get_property(handle, "duration", MPV_FORMAT_DOUBLE, &vs.duration) < 0) {
+    vs.duration = 0.0;  // default
   }
+
+  double vf_fps = 0;
+  double container_fps = 0;
+  bool got_fps = false;
+
+  // try container files
+  if (mpv_get_property(handle, "container-fps", MPV_FORMAT_DOUBLE, &container_fps) >= 0
+      && container_fps > 0.01 && container_fps < 1000.0) {
+    vs.fps = container_fps;
+    got_fps = true;
+      }
+
+  // if vfr, handle vfr fps
+  if (mpv_get_property(handle, "estimated-vf-fps", MPV_FORMAT_DOUBLE, &vf_fps) >= 0
+      && vf_fps > 0.01 && vf_fps < 1000.0) {
+    if (!got_fps) {
+      //estimate fps
+      vs.fps = vf_fps;
+      got_fps = true;
+    }
+      }
+
+  //generic fps
+  if (!got_fps) {
+    double decoder_fps = 0;
+    if (mpv_get_property(handle, "video-params/fps", MPV_FORMAT_DOUBLE, &decoder_fps) >= 0
+        && decoder_fps > 0.01 && decoder_fps < 1000.0) {
+      vs.fps = decoder_fps;
+      got_fps = true;
+        }
+  }
+
+  //if no fps at all
+  if (!got_fps || vs.fps <= 0) vs.fps = 0.0;
 
   //get dimensions from video-out-params
   mpv_node node;
   if (mpv_get_property(handle, "video-out-params", MPV_FORMAT_NODE, &node) >=
       0) {
     get_video_dimensions(&vs, node);
+
+    //fallback
+    if (vs.width <= 0 || vs.height <= 0) {
+      vs.width = 1280;
+      vs.height = 720;
+    }
     mpv_free_node_contents(&node);
   }
 
@@ -262,6 +311,13 @@ VideoState get_metadata(mpv_handle *handle) {
 
 //handle audio track
 void set_audio_track(mpv_handle *handle, int track_id) {
+  if (!handle) return;
+
+  if (track_id <= 0) {
+    mpv_set_property_string(handle,"aid","no");
+    return;
+  }
+
   int64_t id = track_id;
   mpv_set_property(handle, "aid", MPV_FORMAT_INT64, &id);
 }
