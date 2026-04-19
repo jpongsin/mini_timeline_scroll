@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file. \
 Note that the first three versions (0.0.0 - 0.2.0) were simultaneously released on April 17, 2026\
 to make previous versions available for comparison.
 
+## [0.3.1] - 2026-04-19
+### Added
+- Experimental drag and drop mouse controlled slider
+- Refreshing metadata when loading another video is now selective rather than exhaustive
+- Allowing videos with no subtitle tracks to have the options to add subtitles
+
+### Changed
+- Refactored the UI side for better troubleshooting
+- Renamed hardware and software acceleration options for better clarification
+- Reinforced and derived from frames for timecode calculation
+- Refined WASD panning limits
+- Video backend performance and thorough testing for fps to account for unusual codecs
+- Disable audio option if no stream.
+
+
 ## [0.3.0] - 2026-04-18
 ### Added
 - Ability to interact with subtitles; load a video with pre-existing subtitles, import an external subtitle and delete an external subtitle. Tested on mp4 and mkv videos.
@@ -82,6 +97,7 @@ to make previous versions available for comparison.
 - Carried over an ffmpeg metadata retrieval implementation from repo [jpongsin/metadata_fetch] and refactored source code into a retrieval task that returns fps information for the GUI to handle
 - Timecode on a GTK GUI to monitor video duration
 
+[0.3.1]: https://github.com/jpongsin/mini_timeline_scroll/compare/stable-0.3.1..stable-0.3.0
 [0.3.0]: https://github.com/jpongsin/mini_timeline_scroll/compare/stable-0.3.0..stable
 [0.2.0]: https://github.com/jpongsin/mini_timeline_scroll/compare/stable..prototype
 [0.1.0]: https://github.com/jpongsin/mini_timeline_scroll/compare/prototype..legacy
