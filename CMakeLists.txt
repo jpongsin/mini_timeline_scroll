@@ -40,6 +40,20 @@ if(APPLE)
             src/SubtitleImports.cpp
             include/SubtitleImports.h
     )
+elseif(WIN32)
+    add_executable(mini_timeline_scroll WIN32
+            src/main.cpp
+            include/video_backend.h
+            include/VideoWidget.h
+            src/VideoWidget.cpp
+            include/MainWindow.h
+            src/MainWindow.cpp
+            src/video_backend.c
+            src/MainWindowActions.cpp
+            src/ScreenshotVideo.cpp
+            src/SubtitleImports.cpp
+            include/SubtitleImports.h
+    )
 else()
     add_executable(mini_timeline_scroll
             src/main.cpp
